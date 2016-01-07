@@ -1,5 +1,7 @@
 import os
 import logging
+import threading
+import time
 import datetime
 import terminator
 
@@ -41,6 +43,17 @@ WINDOW = terminator.TerminalWindow()
 
 def formatted_input(msg):
     return WINDOW.input(msg).strip().lower()
+
+def updater(period, function=dummy_function()):
+    #Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock)
+    def update():
+        time.sleep(period)
+        function()
+
+    thread = threading.Thread(target=function, daemon=True)
+    thread.start()
+
+    return thread
 
 class Screen(object):
     def __init__(self, title, information, function=dummy_function, args=()):

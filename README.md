@@ -1,0 +1,1 @@
+Gecko CLI is a powerful, clean and easy to use system for creating interactive programs on the command line.

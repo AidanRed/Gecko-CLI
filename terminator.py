@@ -1,6 +1,21 @@
 import os
 import sys
+import tty
+import termios
 from libs import termcolor, ansitowin32
+
+def get_char():
+   #Returns a single character from standard input
+   fd = sys.stdin.fileno()
+   old_settings = termios.tcgetattr(fd)
+   try:
+      tty.setraw(sys.stdin.fileno())
+      ch = sys.stdin.read(1)
+   
+   finally:
+      termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+      
+   return ch
 
 def find_closest(text, values, closest=False):
     """

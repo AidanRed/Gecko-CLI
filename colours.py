@@ -24,3 +24,27 @@ class ColoredWriter(object):
             the_attrs = attrs
 
         self.converter.write_and_convert(termcolor.colored(text, the_colour, the_on_colour, the_attrs) + end)
+
+
+if __name__ == "__main__":
+    """
+    window = TerminalWindow()
+    
+    list1 = ["hello", "hello sir", "something", "weird"]
+    while True:
+        window.print(find_closest(input(), list1, True) + "\n\n")
+        window.redraw()
+    """
+    writer = ColoredWriter()
+    
+    options = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+    
+    for text in options:
+        for background in options:
+            try:
+                writer.write("Hello world!", text, "on_" + background)
+            
+            except TypeError:
+                writer.write("Hello world!", text, None)
+                
+            print("")

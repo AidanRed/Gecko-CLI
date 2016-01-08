@@ -185,28 +185,4 @@ class TerminalWindow(object):
             self._screen = self._screen[:-1].extend(self._screen[-1] + the_input)
 
         return the_input
-
-
-if __name__ == "__main__":
-    """
-    window = TerminalWindow()
-    
-    list1 = ["hello", "hello sir", "something", "weird"]
-    while True:
-        window.print(find_closest(input(), list1, True) + "\n\n")
-        window.redraw()
-    """
-    writer = colours.ColoredWriter()
-    
-    options = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
-    
-    for text in options:
-        for background in options:
-            try:
-                writer.write("Hello world!", text, "on_" + background)
-            
-            except TypeError:
-                writer.write("Hello world!", text, None)
-                
-            print("")
     

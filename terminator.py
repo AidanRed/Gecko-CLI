@@ -3,6 +3,14 @@ import sys
 from libs import termcolor, ansitowin32
 
 def find_closest(text, values, closest=False):
+    """
+    Finds the closest match to text in values.
+
+    :param text:
+    :param values:
+    :param closest:
+    :return:
+    """
     new_text = text.lstrip().lower()
     
     inside = []
@@ -143,21 +151,32 @@ class TerminalWindow(object):
         
         self.redraw()
     
-    def input(self, text=""):
+    def input(self, text="", keep_input=True):
+        """
+        Gets user input.
+
+        keep_input [True]: determines whether the input is added to the text buffer (stays on redraw).
+        """
+
+        params = ()
         try:
+            #If there is a space at the end of text, prevent a newline from being printed.
             if text[-1] == " ":
-                self.print(text[:-1], end=" ")
-        
+                params = (text[:-1], " ")
+
+            else:
+                params = (text, "")
+
         except IndexError:
-            self.print(text, end="")
-        
-        finally:
-            return input()
-        
-        self.print(text, end="")
+            pass
+
+        self.print(*params)
         the_input = input()
-        self._screen = self._screen[:-1].extend(self._screen[-1] + the_input)
-        
+
+        if keep_input:
+            #Add the input to the screen so it will stay on redraw.
+            self._screen = self._screen[:-1].extend(self._screen[-1] + the_input)
+
         return the_input
 
 

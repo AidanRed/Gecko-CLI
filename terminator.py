@@ -1,21 +1,38 @@
 import os
+import colours
 import sys
 import tty
-import termios
-from libs import termcolor, ansitowin32
+
+if os.name == "nt":
+    import msvcrt
+
+else:
+    import termios
+
 
 def get_char():
-   #Returns a single character from standard input
-   fd = sys.stdin.fileno()
-   old_settings = termios.tcgetattr(fd)
-   try:
-      tty.setraw(sys.stdin.fileno())
-      ch = sys.stdin.read(1)
-   
-   finally:
-      termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-      
-   return ch
+    """Returns a single character from standard input."""
+
+    #Windows method returns empty string if no character is waiting to be read.
+    if os.name == "nt":
+        if msvcrt.kbhit():
+            return msvcrt.getch()
+
+        else:
+            return ""
+
+    else:
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        return ch
+
 
 def find_closest(text, values, closest=False):
     """
@@ -99,31 +116,6 @@ def suggest_closest(msg, the_list, the_window, closest=True):
 def index_from_end(list1, value):
     list1.reverse()
     return -(list1.index(value) + 1)
-    
-    
-class ColoredWriter(object):
-    def __init__(self):
-        self.converter = ansitowin32.AnsiToWin32(sys.stdout)
-        
-        self.colour = "white"
-        self.on_colour = "on_blue"
-        self.attrs = None
-    
-    def write(self, text, colour=None, on_colour=None, attrs=None, end="\n"):
-        the_colour = self.colour
-        the_on_colour = self.on_colour
-        the_attrs = self.attrs
-        
-        if colour is not None:
-            the_colour = colour
-        
-        if on_colour is not None:
-            the_on_colour = on_colour
-        
-        if attrs is not None:
-            the_attrs = attrs
-            
-        self.converter.write_and_convert(termcolor.colored(text, the_colour, the_on_colour, the_attrs) + end)
 
 
 class TerminalWindow(object):
@@ -135,7 +127,7 @@ class TerminalWindow(object):
             self._CLEAR_COMMAND = "clear"
             
         self._screen = []
-        self._writer = ColoredWriter()
+        self._writer = colours.ColoredWriter()
     
     def print(self, text="", end="\n"):
         self._screen.append(text)
@@ -204,7 +196,7 @@ if __name__ == "__main__":
         window.print(find_closest(input(), list1, True) + "\n\n")
         window.redraw()
     """
-    writer = ColoredWriter()
+    writer = colours.ColoredWriter()
     
     options = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
     

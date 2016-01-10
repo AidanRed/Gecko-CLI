@@ -157,6 +157,27 @@ class TerminalWindow(object):
             self._screen = self._screen[:-1]
         
         self.redraw()
+
+    def count_lines(self):
+        return self._screen.count("\n")
+
+    def insert(self, text, xy):
+        """Insert the text at position xy, where the greater the y value, the lower the height."""
+        num_lines = self.count_lines()
+        if num_lines < xy[1]:
+            self._screen += "\n" * (xy[1] - num_lines)
+            self._screen += (" " * xy[0]) + text
+
+        else:
+            def find_nth(iterable, item, n):
+                start = iterable.index(item)
+                while start >= 0 and n > 1:
+                    start = iterable.index(item, start+len(item))
+                    n -= 1
+                return start
+
+            index = find_nth(self._screen, "\n", xy[1]) + 1
+            self._screen = self._screen[:index] + (" " * xy[0]) + text + self._screen[index:]
     
     def input(self, text="", keep_input=True):
         """

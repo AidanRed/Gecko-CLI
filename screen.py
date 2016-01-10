@@ -1,16 +1,25 @@
-import os
+import datetime
 import logging
+import os
 import threading
 import time
-import datetime
+
 import terminator
 
 LOGFILE = "logfile.log"
 
+
 def get_datetime():
     return datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
 
+
 def new_logging_session(path):
+    """
+    Used to distinguish between different logging sessions.
+
+    :param path: path of the log file.
+    :return:
+    """
     logfile = open(path, "a+")
 
     if logfile.read().strip() == "":
@@ -18,6 +27,9 @@ def new_logging_session(path):
 
     else:
         logfile.write("\n\n{} New {} session, logging started.\n".format(get_datetime(), __name__))
+
+    logfile.close()
+
 
 new_logging_session(LOGFILE)
 
@@ -36,16 +48,22 @@ clear_command = "clear"
 if os.name == "nt":
     clear_command = "cls"
 
+
 def dummy_function():
     pass
 
+
 WINDOW = terminator.TerminalWindow()
+
 
 def formatted_input(msg):
     return WINDOW.input(msg).strip().lower()
 
+
 def updater(period, function=dummy_function()):
-    #Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock)
+    """
+    Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock).
+    """
     def update():
         time.sleep(period)
         function()
@@ -55,7 +73,11 @@ def updater(period, function=dummy_function()):
 
     return thread
 
+
 class Screen(object):
+    """
+
+    """
     def __init__(self, title, information, function=dummy_function, args=()):
         self.title = title
         self.title_display = "=== " + title + " ==="
@@ -71,7 +93,6 @@ class Screen(object):
 
         for key in kwargs.keys():
             to_display = to_display.replace("@" + key + "@", kwargs[key])
-
 
         WINDOW.print(self.title_display.center(terminal_width))
         WINDOW.print()

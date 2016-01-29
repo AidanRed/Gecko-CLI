@@ -65,10 +65,11 @@ def updater(period, function=dummy_function()):
     Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock).
     """
     def update():
-        time.sleep(period)
-        function()
+        while True:
+            time.sleep(period)
+            function()
 
-    thread = threading.Thread(target=function, daemon=True)
+    thread = threading.Thread(target=update, daemon=True)
     thread.start()
 
     return thread

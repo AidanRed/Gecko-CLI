@@ -12,7 +12,6 @@ else:
 
 def get_char():
     """Returns a single character from standard input."""
-
     #Windows method returns empty string if no character is waiting to be read.
     if os.name == "nt":
         if msvcrt.kbhit():

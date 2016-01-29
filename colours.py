@@ -5,8 +5,8 @@ class ColoredWriter(object):
     def __init__(self):
         self.converter = ansitowin32.AnsiToWin32(sys.stdout)
 
-        self.colour = "white"
-        self.on_colour = "on_blue"
+        self.colour = None
+        self.on_colour = None
         self.attrs = None
 
     def write(self, text, colour=None, on_colour=None, attrs=None, end="\n"):

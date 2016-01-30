@@ -1,12 +1,12 @@
 import os
 import colours
 import sys
-import tty
 
 if os.name == "nt":
     import msvcrt
 
 else:
+    import tty
     import termios
 
 
@@ -211,7 +211,11 @@ class TerminalWindow(object):
 
         if keep_input:
             #Add the input to the screen so it will stay on redraw.
-            self._screen = self._screen[:-1].extend(self._screen[-1] + the_input)
+            try:
+                self._screen[:-1].extend(self._screen[-1] + the_input)
+
+            except IndexError:
+                self._screen = [the_input,]
 
         return the_input
     

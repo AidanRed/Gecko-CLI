@@ -127,6 +127,15 @@ class TerminalWindow(object):
             
         self._screen = []
         self._writer = colours.ColoredWriter()
+        self._VALID_COLOURS = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+
+    def fg_colour(self, colour):
+        assert colour in self._VALID_COLOURS
+        self._writer.colour = colour
+
+    def bg_colour(self, colour):
+        assert colour in self._VALID_COLOURS
+        self._writer.on_colour = colour
     
     def print(self, text="", end="\n"):
         self._screen.append(text)

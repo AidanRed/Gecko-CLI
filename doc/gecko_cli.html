@@ -1,0 +1,365 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gecko_cli package &mdash; Gecko CLI 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="top" title="Gecko CLI 1.1 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Gecko CLI’s documentation!" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Gecko CLI’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Gecko CLI 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">gecko_cli package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-gecko_cli.colours">gecko_cli.colours module</a></li>
+<li><a class="reference internal" href="#module-gecko_cli.screen">gecko_cli.screen module</a></li>
+<li><a class="reference internal" href="#module-gecko_cli.terminator">gecko_cli.terminator module</a></li>
+<li><a class="reference internal" href="#module-gecko_cli">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Gecko CLI&#8217;s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/gecko_cli.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="gecko-cli-package">
+<h1>gecko_cli package<a class="headerlink" href="#gecko-cli-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-gecko_cli.colours">
+<span id="gecko-cli-colours-module"></span><h2>gecko_cli.colours module<a class="headerlink" href="#module-gecko_cli.colours" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gecko_cli.colours.ColouredWriter">
+<em class="property">class </em><code class="descclassname">gecko_cli.colours.</code><code class="descname">ColouredWriter</code><a class="reference internal" href="_modules/gecko_cli/colours.html#ColouredWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.colours.ColouredWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Simplifies the use of coloured text and highlighting in a terminal.</p>
+<dl class="method">
+<dt id="gecko_cli.colours.ColouredWriter.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>text</em>, <em>colour=None</em>, <em>on_colour=None</em>, <em>attrs=None</em>, <em>end='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/colours.html#ColouredWriter.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.colours.ColouredWriter.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write text to the terminal.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>text (str): the text to write.
+colour (str): the colour of the text.
+on_colour (str): the colour of the text background/highlighting.
+attrs (str): extra properties such as bold or italics.
+end (str): added to the end of text.</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gecko_cli.screen">
+<span id="gecko-cli-screen-module"></span><h2>gecko_cli.screen module<a class="headerlink" href="#module-gecko_cli.screen" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gecko_cli.screen.Screen">
+<em class="property">class </em><code class="descclassname">gecko_cli.screen.</code><code class="descname">Screen</code><span class="sig-paren">(</span><em>title</em>, <em>information</em>, <em>function=&lt;function dummy_function&gt;</em>, <em>args=()</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/screen.html#Screen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.screen.Screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Callable menu or screen.</p>
+<p>Makes use of keywords in the form &#64;KEYWORD&#64; which are replaced when the screen is drawn. These are used to display
+dynamic information such as the current time.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.screen.dummy_function">
+<code class="descclassname">gecko_cli.screen.</code><code class="descname">dummy_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/screen.html#dummy_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.screen.dummy_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder function.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.screen.formatted_input">
+<code class="descclassname">gecko_cli.screen.</code><code class="descname">formatted_input</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/screen.html#formatted_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.screen.formatted_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes whitespace from the beginning and start of a string and makes it lower-case.
+Used to allow easier processing of input such as commands.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>msg (str): the text to format.</dd>
+</dl>
+<p>Returns: str</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.screen.suggest_closest">
+<code class="descclassname">gecko_cli.screen.</code><code class="descname">suggest_closest</code><span class="sig-paren">(</span><em>msg</em>, <em>matches</em>, <em>the_window</em>, <em>closest=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/screen.html#suggest_closest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.screen.suggest_closest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around the terminator.find_closest function that gets input and asks the user for confirmation
+on the correction.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>msg (str): the message to display when waiting for input.
+matches (iterable): iterable containing the possible matches.
+the_window (terminator.TerminalWindow): window object for IO.
+closest (bool): if True, forces a match in matches.</dd>
+</dl>
+<p>Returns: str</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.screen.updater">
+<code class="descclassname">gecko_cli.screen.</code><code class="descname">updater</code><span class="sig-paren">(</span><em>period</em>, <em>function=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/screen.html#updater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.screen.updater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>period (int): the number of seconds between each function call.
+function: the function to call.</dd>
+</dl>
+<p>Returns: threading.Thread</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gecko_cli.terminator">
+<span id="gecko-cli-terminator-module"></span><h2>gecko_cli.terminator module<a class="headerlink" href="#module-gecko_cli.terminator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="gecko_cli.terminator.TerminalWindow">
+<em class="property">class </em><code class="descclassname">gecko_cli.terminator.</code><code class="descname">TerminalWindow</code><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Flexible terminal interface that gives greater control over how text is displayed.</p>
+<dl class="docutils">
+<dt>TODO:</dt>
+<dd><ul class="first last simple">
+<li>Add textwrap support</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.bg_colour">
+<code class="descname">bg_colour</code><span class="sig-paren">(</span><em>colour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.bg_colour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.bg_colour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the background colour of future text.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>colour (str): the colour to change the background colour to. Must exist in self._VALID_COLOURS.</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.clear_buffer">
+<code class="descname">clear_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.clear_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.clear_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears screen data so it will be clear if the terminal is redrawn.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.clear_screen">
+<code class="descname">clear_screen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.clear_screen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.clear_screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the terminal and screen data.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.clear_terminal">
+<code class="descname">clear_terminal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.clear_terminal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.clear_terminal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the terminal window. Screen data is not affected.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.count_lines">
+<code class="descname">count_lines</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.count_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.count_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of lines in the screen data.</p>
+<p>Returns: int</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.delete_previous">
+<code class="descname">delete_previous</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.delete_previous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.delete_previous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the previous line in screen data.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.fg_colour">
+<code class="descname">fg_colour</code><span class="sig-paren">(</span><em>colour</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.fg_colour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.fg_colour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the colour of future text.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>colour (str): the colour to change the text colour to. Must exist in self._VALID_COLOURS.</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.input">
+<code class="descname">input</code><span class="sig-paren">(</span><em>text=''</em>, <em>keep_input=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets user input.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>text (str): the text to prompt user input.
+keep_input (bool): if true, the user input is added to the screen data (stays on redraw).</dd>
+</dl>
+<p>Returns: str</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.insert">
+<code class="descname">insert</code><span class="sig-paren">(</span><em>text</em>, <em>xy</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the text at position xy, where the greater the y value, the lower the height.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>text (str): the text to insert.
+xy (tuple): tuple containing x and y integer coordinates.</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.print">
+<code class="descname">print</code><span class="sig-paren">(</span><em>text=''</em>, <em>end='\n'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays text to the terminal. The text is added to the screen data so that if the terminal is re-drawn the
+text will still be displayed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>text (str): the text to be displayed.
+end (str): additional string to display at the end of a line. This is not added to the screen data.</dd>
+</dl>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="gecko_cli.terminator.TerminalWindow.redraw">
+<code class="descname">redraw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#TerminalWindow.redraw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.TerminalWindow.redraw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the terminal then re-writes screen data.</p>
+<p>Returns: None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.terminator.find_closest">
+<code class="descclassname">gecko_cli.terminator.</code><code class="descname">find_closest</code><span class="sig-paren">(</span><em>text</em>, <em>values</em>, <em>closest=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#find_closest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.find_closest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds closest match to text in values.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>text (str): the string to find matches for.
+values (iterable): iterable containing possible matches.
+closest (bool): if False only returns exact matches.</dd>
+</dl>
+<p>Returns: str</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.terminator.get_char">
+<code class="descclassname">gecko_cli.terminator.</code><code class="descname">get_char</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#get_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.get_char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a single character from standard input.</p>
+<p>Returns: str</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="gecko_cli.terminator.index_from_end">
+<code class="descclassname">gecko_cli.terminator.</code><code class="descname">index_from_end</code><span class="sig-paren">(</span><em>list1</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gecko_cli/terminator.html#index_from_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#gecko_cli.terminator.index_from_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the index of the first match of value in list starting from the end and working backwards.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>list1 (iterable): iterable to find match in.
+value:</dd>
+</dl>
+<p>Returns: int</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gecko_cli">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gecko_cli" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Gecko CLI’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Gecko CLI 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Aidan Redding.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

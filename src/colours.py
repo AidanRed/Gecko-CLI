@@ -1,8 +1,14 @@
 import sys
 from libs import ansitowin32, termcolor
 
-class ColoredWriter(object):
+class ColouredWriter(object):
+    """
+    Simplifies the use of coloured text and highlighting in a terminal.
+    """
     def __init__(self):
+        """
+        Initialises the ColouredWriter object.
+        """
         self.converter = ansitowin32.AnsiToWin32(sys.stdout)
 
         self.colour = None
@@ -10,6 +16,18 @@ class ColoredWriter(object):
         self.attrs = None
 
     def write(self, text, colour=None, on_colour=None, attrs=None, end="\n"):
+        """
+        Write text to the terminal.
+
+        Args:
+            text (str): the text to write.
+            colour (str): the colour of the text.
+            on_colour (str): the colour of the text background/highlighting.
+            attrs (str): extra properties such as bold or italics.
+            end (str): added to the end of text.
+
+        Returns: None
+        """
         the_colour = self.colour
         the_on_colour = self.on_colour
         the_attrs = self.attrs
@@ -27,15 +45,7 @@ class ColoredWriter(object):
 
 
 if __name__ == "__main__":
-    """
-    window = TerminalWindow()
-    
-    list1 = ["hello", "hello sir", "something", "weird"]
-    while True:
-        window.print(find_closest(input(), list1, True) + "\n\n")
-        window.redraw()
-    """
-    writer = ColoredWriter()
+    writer = ColouredWriter()
     
     options = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
     

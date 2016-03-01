@@ -1,5 +1,5 @@
 import os
-import colours
+from . import colours
 import sys
 
 if os.name == "nt":
@@ -11,7 +11,11 @@ else:
 
 
 def get_char():
-    """Returns a single character from standard input."""
+    """
+    Gets a single character from standard input.
+
+    Returns: str
+    """
     #Windows method returns empty string if no character is waiting to be read.
     if os.name == "nt":
         if msvcrt.kbhit():
@@ -35,12 +39,14 @@ def get_char():
 
 def find_closest(text, values, closest=False):
     """
-    Finds the closest match to text in values.
+    Finds closest match to text in values.
 
-    :param text:
-    :param values:
-    :param closest:
-    :return:
+    Args:
+        text (str): the string to find matches for.
+        values (iterable): iterable containing possible matches.
+        closest (bool): if False only returns exact matches.
+
+    Returns: str
     """
     new_text = text.lstrip().lower()
     
@@ -94,31 +100,31 @@ def find_closest(text, values, closest=False):
         return smallest
 
 
-def suggest_closest(msg, the_list, the_window, closest=True):
-    input1 = input(msg)
-    if input1 == "":
-        return input1
-    while True:
-        the_closest = find_closest(input1, the_list, closest=closest)
-        if the_closest == input1:
-            return input1
-            
-        the_window.redraw()
-        print("Did you mean " + the_closest + "? Press \"Enter\" to confirm.")
-        input2 = input()
-        if input2.strip() == "":
-            return the_closest
-        
-        else:
-            input1 = input2
-
 def index_from_end(list1, value):
+    """
+    Finds the index of the first match of value in list starting from the end and working backwards.
+
+    Args:
+        list1 (iterable): iterable to find match in.
+        value:
+
+    Returns: int
+    """
     list1.reverse()
     return -(list1.index(value) + 1)
 
 
 class TerminalWindow(object):
+    """
+    Flexible terminal interface that gives greater control over how text is displayed.
+
+    TODO:
+     - Add textwrap support
+    """
     def __init__(self):
+        """
+        Initialises the TerminalWindow object.
+        """
         if os.name == "nt":
             self._CLEAR_COMMAND = "cls"
         
@@ -126,37 +132,95 @@ class TerminalWindow(object):
             self._CLEAR_COMMAND = "clear"
             
         self._screen = []
-        self._writer = colours.ColoredWriter()
+        self._writer = colours.ColouredWriter()
         self._VALID_COLOURS = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
     def fg_colour(self, colour):
+        """
+        Changes the colour of future text.
+
+        Args:
+            colour (str): the colour to change the text colour to. Must exist in self._VALID_COLOURS.
+
+        Returns: None
+        """
         assert colour in self._VALID_COLOURS
         self._writer.colour = colour
 
     def bg_colour(self, colour):
+        """
+        Changes the background colour of future text.
+
+        Args:
+            colour (str): the colour to change the background colour to. Must exist in self._VALID_COLOURS.
+
+        Returns: None
+        """
         assert colour in self._VALID_COLOURS
         self._writer.on_colour = colour
     
     def print(self, text="", end="\n"):
-        self._screen.append(text)
+        """
+        Displays text to the terminal. The text is added to the screen data so that if the terminal is re-drawn the
+        text will still be displayed.
+
+        Args:
+            text (str): the text to be displayed.
+            end (str): additional string to display at the end of a line. This is not added to the screen data.
+
+        Returns: None
+        """
+        if "\n" not in end:
+            self._screen[-1] += text
+
+        else:
+            for i in range(text.count("\n")):
+                self._screen.append("")
+                self._screen[-1] += text
+
         self._writer.write(text, end=end)
     
     def clear_buffer(self):
+        """
+        Clears screen data so it will be clear if the terminal is redrawn.
+
+        Returns: None
+        """
         self._screen = []
     
     def clear_terminal(self):
+        """
+        Clears the terminal window. Screen data is not affected.
+
+        Returns: None
+        """
         os.system(self._CLEAR_COMMAND)
     
     def clear_screen(self):
+        """
+        Clears the terminal and screen data.
+
+        Returns: None
+        """
         self.clear_buffer()
         self.clear_terminal()
     
     def redraw(self):
+        """
+        Clear the terminal then re-writes screen data.
+
+        Returns: None
+        """
         self.clear_terminal()
         for line in self._screen:
             self._writer.write(line)
     
     def delete_previous(self):
+        """
+        Removes the previous line in screen data.
+
+        Returns: None
+        """
         try:
             the_index = index_from_end(self._screen[-1], "\n")
             self._screen = self._screen[:-1].extend(self._screen[-1][:the_index])
@@ -167,10 +231,23 @@ class TerminalWindow(object):
         self.redraw()
 
     def count_lines(self):
+        """
+        Counts the number of lines in the screen data.
+
+        Returns: int
+        """
         return self._screen.count("\n")
 
     def insert(self, text, xy):
-        """Insert the text at position xy, where the greater the y value, the lower the height."""
+        """
+        Insert the text at position xy, where the greater the y value, the lower the height.
+
+        Args:
+            text (str): the text to insert.
+            xy (tuple): tuple containing x and y integer coordinates.
+
+        Returns: None
+        """
         num_lines = self.count_lines()
         if num_lines < xy[1]:
             self._screen += "\n" * (xy[1] - num_lines)
@@ -186,14 +263,17 @@ class TerminalWindow(object):
 
             index = find_nth(self._screen, "\n", xy[1]) + 1
             self._screen = self._screen[:index] + (" " * xy[0]) + text + self._screen[index:]
-    
+
     def input(self, text="", keep_input=True):
         """
         Gets user input.
 
-        keep_input [True]: determines whether the input is added to the text buffer (stays on redraw).
-        """
+        Args:
+            text (str): the text to prompt user input.
+            keep_input (bool): if true, the user input is added to the screen data (stays on redraw).
 
+        Returns: str
+        """
         params = ()
         try:
             #If there is a space at the end of text, prevent a newline from being printed.
@@ -218,4 +298,3 @@ class TerminalWindow(object):
                 self._screen = [the_input,]
 
         return the_input
-    

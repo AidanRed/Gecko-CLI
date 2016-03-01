@@ -218,3 +218,6 @@ pip-log.txt
 .idea/
 __pycache__/
 *.log
+
+#Dolphin files
+.directory

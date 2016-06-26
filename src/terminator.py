@@ -252,6 +252,19 @@ class TerminalWindow(object):
         """
         assert colour in self._VALID_COLOURS
         self._writer.on_colour = colour
+
+    def set_colours(self, the_colours):
+        """
+        Set foreground and background colours simultaneously.
+
+        Args:
+            the_colours (tuple): 2-element tuple containing the foreground and background text colours respectively.
+
+        Returns: None
+        """
+        self.fg_colour(the_colours[0])
+        if len(the_colours) > 1:
+            self.bg_colour(the_colours[1])
     
     def print(self, text="", end="\n"):
         """

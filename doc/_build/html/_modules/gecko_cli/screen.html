@@ -1,0 +1,248 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>gecko_cli.screen &mdash; Gecko CLI 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="top" title="Gecko CLI 1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Gecko CLI 1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for gecko_cli.screen</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">terminator</span>
+
+<span class="n">TERMINAL_WIDTH</span> <span class="o">=</span> <span class="n">terminator</span><span class="o">.</span><span class="n">TERMINAL_WIDTH</span>
+<span class="n">clear_command</span> <span class="o">=</span> <span class="s2">&quot;clear&quot;</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+    <span class="n">clear_command</span> <span class="o">=</span> <span class="s2">&quot;cls&quot;</span>
+
+
+<div class="viewcode-block" id="dummy_function"><a class="viewcode-back" href="../../gecko_cli.html#gecko_cli.screen.dummy_function">[docs]</a><span class="k">def</span> <span class="nf">dummy_function</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Placeholder function.</span>
+
+<span class="sd">    Returns: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">WINDOW</span> <span class="o">=</span> <span class="n">terminator</span><span class="o">.</span><span class="n">TerminalWindow</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="suggest_closest"><a class="viewcode-back" href="../../gecko_cli.html#gecko_cli.screen.suggest_closest">[docs]</a><span class="k">def</span> <span class="nf">suggest_closest</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">matches</span><span class="p">,</span> <span class="n">the_window</span><span class="p">,</span> <span class="n">closest</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around the terminator.find_closest function that gets input and asks the user for confirmation</span>
+<span class="sd">    on the correction.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): the message to display when waiting for input.</span>
+<span class="sd">        matches (iterable): iterable containing the possible matches.</span>
+<span class="sd">        the_window (terminator.TerminalWindow): window object for IO.</span>
+<span class="sd">        closest (bool): if True, forces a match in matches.</span>
+
+<span class="sd">    Returns: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input1</span> <span class="o">=</span> <span class="n">WINDOW</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">input1</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">input1</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">the_closest</span> <span class="o">=</span> <span class="n">terminator</span><span class="o">.</span><span class="n">find_closest</span><span class="p">(</span><span class="n">input1</span><span class="p">,</span> <span class="n">matches</span><span class="p">,</span> <span class="n">closest</span><span class="o">=</span><span class="n">closest</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">the_closest</span> <span class="o">==</span> <span class="n">input1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">input1</span>
+
+        <span class="n">the_window</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Did you mean &quot;</span> <span class="o">+</span> <span class="n">the_closest</span> <span class="o">+</span> <span class="s2">&quot;? Press </span><span class="se">\&quot;</span><span class="s2">Enter</span><span class="se">\&quot;</span><span class="s2"> to confirm, otherwise enter new input.&quot;</span><span class="p">)</span>
+        <span class="n">input2</span> <span class="o">=</span> <span class="n">WINDOW</span><span class="o">.</span><span class="n">input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">input2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">the_closest</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">input1</span> <span class="o">=</span> <span class="n">input2</span></div>
+
+
+<div class="viewcode-block" id="formatted_input"><a class="viewcode-back" href="../../gecko_cli.html#gecko_cli.screen.formatted_input">[docs]</a><span class="k">def</span> <span class="nf">formatted_input</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes whitespace from the beginning and start of a string and makes it lower-case.</span>
+<span class="sd">    Used to allow easier processing of input such as commands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (str): the text to format.</span>
+
+<span class="sd">    Returns: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">WINDOW</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="updater"><a class="viewcode-back" href="../../gecko_cli.html#gecko_cli.screen.updater">[docs]</a><span class="k">def</span> <span class="nf">updater</span><span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">dummy_function</span><span class="p">()):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Periodically calls a function. Useful if you want to periodically refresh a screen (e.g. for a clock).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        period (int): the number of seconds between each function call.</span>
+<span class="sd">        function: the function to call.</span>
+
+<span class="sd">    Returns: threading.Thread</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
+            <span class="n">function</span><span class="p">()</span>
+
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">update</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">thread</span></div>
+
+
+<div class="viewcode-block" id="Screen"><a class="viewcode-back" href="../../gecko_cli.html#gecko_cli.screen.Screen">[docs]</a><span class="k">class</span> <span class="nc">Screen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Callable menu or screen.</span>
+
+<span class="sd">    Makes use of keywords in the form @KEYWORD@ which are replaced when the screen is drawn. These are used to display</span>
+<span class="sd">    dynamic information such as the current time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">information</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">dummy_function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">wrap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">wrap_width</span><span class="o">=</span><span class="n">TERMINAL_WIDTH</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialises the screen object</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            title (str): title of the menu/screen. Displayed in the centre at the top.</span>
+<span class="sd">            information (str): information to be displayed. Can contain keywords in the form: @KEYWORD@.</span>
+<span class="sd">            function: optional function to be called after displaying information.</span>
+<span class="sd">            args (iterable): arguments to be provided to the function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title_display</span> <span class="o">=</span> <span class="s2">&quot;=== &quot;</span> <span class="o">+</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot; ===&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">information</span> <span class="o">=</span> <span class="n">information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func_args</span> <span class="o">=</span> <span class="n">args</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrap</span> <span class="o">=</span> <span class="n">wrap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wrap_width</span> <span class="o">=</span> <span class="n">wrap_width</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs (dict): dictionary containing the keywords to replace as keys and the strings to replace them with as</span>
+<span class="sd">            the values.</span>
+
+<span class="sd">        Returns: self.function output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+        <span class="n">to_display</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">information</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">to_display</span> <span class="o">=</span> <span class="n">to_display</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;@&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="n">prev_wrap</span> <span class="o">=</span> <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap</span>
+        <span class="n">prev_width</span> <span class="o">=</span> <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap_width</span>
+
+        <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_width</span>
+
+        <span class="n">WINDOW</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title_display</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">TERMINAL_WIDTH</span><span class="p">))</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="k">print</span><span class="p">()</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="k">print</span><span class="p">(</span><span class="n">to_display</span><span class="p">)</span>
+
+        <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap</span> <span class="o">=</span> <span class="n">prev_wrap</span>
+        <span class="n">WINDOW</span><span class="o">.</span><span class="n">wrap_width</span> <span class="o">=</span> <span class="n">prev_width</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">func_args</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Gecko CLI 1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Aidan Redding.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

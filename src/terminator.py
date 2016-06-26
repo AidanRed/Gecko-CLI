@@ -1,6 +1,9 @@
 import os
-from . import colours
 import sys
+import textwrap
+import shutil
+
+from . import colours
 
 if os.name == "nt":
     import msvcrt
@@ -9,6 +12,8 @@ else:
     import tty
     import termios
 
+TERMINAL_WIDTH = shutil.get_terminal_size((80, 20))
+
 
 def get_char():
     """
@@ -16,7 +21,7 @@ def get_char():
 
     Returns: str
     """
-    #Windows method returns empty string if no character is waiting to be read.
+    # Windows method returns empty string if no character is waiting to be read.
     if os.name == "nt":
         if msvcrt.kbhit():
             return msvcrt.getch()
@@ -114,26 +119,115 @@ def index_from_end(list1, value):
     return -(list1.index(value) + 1)
 
 
+class DrawQueue(object):
+    def __init__(self, window):
+        """
+        Initialises the object.
+
+        Args:
+            window (TerminalWindow): window object to draw to.
+
+        Returns: None
+        """
+        assert isinstance(window, TerminalWindow)
+        self.window = window
+
+        self.queue = []
+
+    def add_draw(self, func, args=()):
+        """
+        Add a draw call to the queue.
+        
+        Args:
+            func (callable or str): the function to call or string to print.
+            args (tuple): the arguments to give the function when it is called.
+
+        Returns: None
+        """
+        self.queue.append((func, args))
+        self.next()
+
+    def next(self):
+        """
+        Attempts to make the next draw call in the queue.
+
+        Returns: None
+        """
+        if self.window.lock is not None or id(self.queue[0][0]) == self.window.lock:
+            try:
+                if isinstance(self.queue[0][0], str):
+                    self.window.print(self.queue[0][0])
+
+                else:
+                    self.queue[0][0](*self.queue[0][1])
+
+                self.window.lock = None
+
+            except IndexError:
+                # No draw calls currently exist.
+                pass
+
+
 class TerminalWindow(object):
     """
     Flexible terminal interface that gives greater control over how text is displayed.
-
-    TODO:
-     - Add textwrap support
     """
-    def __init__(self):
+    def __init__(self, wrap=False, wrap_width=TERMINAL_WIDTH):
         """
         Initialises the TerminalWindow object.
+
+        Args:
+            wrap (bool): determines whether text being printed should be wrapped. Uses the TERMINAL_WIDTH global variable.
         """
         if os.name == "nt":
             self._CLEAR_COMMAND = "cls"
         
         else:
             self._CLEAR_COMMAND = "clear"
+
+        self.wrap = wrap
+        self.wrap_width = wrap_width
             
         self._screen = []
         self._writer = colours.ColouredWriter()
         self._VALID_COLOURS = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
+
+        self.draw_queue = DrawQueue(self)
+
+        # Lock is the id of the drawing function which has obtained the lock
+        self.lock = None
+
+    def __setattr__(self, key, value):
+        # Goes to the next item in self.draw_queue whenever self is unlocked.
+        try:
+            if key == "lock" and value is None and self.lock is not None:
+                self.draw_queue.next()
+
+        except AttributeError:
+            #Occurs in __init__
+            pass
+
+        super().__setattr__(key, value)
+
+    def lock(self, the_id):
+        """
+        Locks the TerminalWindow object to prevent other threads from changing the screen.
+        This is not enforced - it is either used by the Screen class or implemented by the user.
+
+        Args:
+            the_id (int): the id of the function obtaining the lock.
+
+        Returns: None
+        """
+        self.lock = the_id
+
+    def unlock(self):
+        """
+        Unlocks the TerminalWindow.
+
+        Returns: None
+        """
+        self.lock = None
 
     def fg_colour(self, colour):
         """
@@ -170,8 +264,15 @@ class TerminalWindow(object):
 
         Returns: None
         """
+        if self.wrap:
+            text = "\n".join(textwrap.wrap(text, width=self.wrap_width))
+
         if "\n" not in end:
-            self._screen[-1] += text
+            try:
+                self._screen[-1] += text
+
+            except IndexError:
+                self._screen.append(text)
 
         else:
             for i in range(text.count("\n")):
@@ -276,7 +377,7 @@ class TerminalWindow(object):
         """
         params = ()
         try:
-            #If there is a space at the end of text, prevent a newline from being printed.
+            # If there is a space at the end of text, prevent a newline from being printed.
             if text[-1] == " ":
                 params = (text[:-1], " ")
 
@@ -290,7 +391,7 @@ class TerminalWindow(object):
         the_input = input()
 
         if keep_input:
-            #Add the input to the screen so it will stay on redraw.
+            # Add the input to the screen so it will stay on redraw.
             try:
                 self._screen[:-1].extend(self._screen[-1] + the_input)
 

@@ -6,7 +6,7 @@ import time
 
 from . import terminator
 
-TERMINAL_WIDTH = 80
+TERMINAL_WIDTH = terminator.TERMINAL_WIDTH
 clear_command = "clear"
 
 if os.name == "nt":
@@ -97,7 +97,7 @@ class Screen(object):
     Makes use of keywords in the form @KEYWORD@ which are replaced when the screen is drawn. These are used to display
     dynamic information such as the current time.
     """
-    def __init__(self, title, information, function=dummy_function, args=()):
+    def __init__(self, title, information, function=dummy_function, args=(), wrap=False, wrap_width=TERMINAL_WIDTH):
         """
         Initialises the screen object
 
@@ -113,6 +113,9 @@ class Screen(object):
         self.function = function
         self.func_args = args
 
+        self.wrap = wrap
+        self.wrap_width = wrap_width
+
     def __call__(self, kwargs={}):
         """
         Args:
@@ -127,9 +130,18 @@ class Screen(object):
         for key in kwargs.keys():
             to_display = to_display.replace("@" + key + "@", kwargs[key])
 
+        prev_wrap = WINDOW.wrap
+        prev_width = WINDOW.wrap_width
+
+        WINDOW.wrap = self.wrap
+        WINDOW.wrap_width = self.wrap_width
+
         WINDOW.print(self.title_display.center(TERMINAL_WIDTH))
         WINDOW.print()
         WINDOW.print(to_display)
+
+        WINDOW.wrap = prev_wrap
+        WINDOW.wrap_width = prev_width
 
         if len(self.func_args) > 0:
             return self.function(*self.func_args)

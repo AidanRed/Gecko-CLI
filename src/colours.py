@@ -1,5 +1,6 @@
 import sys
-from libs import ansitowin32, termcolor
+from .libs import ansitowin32, termcolor
+
 
 class ColouredWriter(object):
     """

@@ -12,7 +12,7 @@ else:
     import tty
     import termios
 
-TERMINAL_WIDTH = shutil.get_terminal_size((80, 20))
+TERMINAL_WIDTH, TERMINAL_HEIGHT = shutil.get_terminal_size((80, 20))
 
 
 def get_char():

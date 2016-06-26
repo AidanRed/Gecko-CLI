@@ -9,6 +9,8 @@ from . import terminator
 TERMINAL_WIDTH = terminator.TERMINAL_WIDTH
 clear_command = "clear"
 
+WINDOW = terminator.TerminalWindow()
+
 if os.name == "nt":
     clear_command = "cls"
 
@@ -22,7 +24,58 @@ def dummy_function():
     pass
 
 
-WINDOW = terminator.TerminalWindow()
+def format_string(the_string):
+    """
+    Makes the string lowercase and removes leading and trailing whitespace.
+
+    Args:
+        the_string (str): The string to format.
+
+    Returns: str
+    """
+    return the_string.strip().lower()
+
+
+def force_int(msg):
+    """
+    Force the user to enter an integer.
+
+    Args:
+        msg (str): The message to display when asking for input.
+
+    Returns: int
+    """
+    the_int = None
+    while the_int is None:
+        try:
+            the_int = int(input(msg))
+
+        except ValueError:
+            WINDOW.redraw()
+            print("That was not valid input!")
+
+    return the_int
+
+
+def force_input_list(msg, list1, format_func=format_string):
+    """
+    Forces the user to enter input contained in list1.
+
+    Args:
+        msg (str): The message to display when asking for input.
+        list1 (tuple): The list of valid inputs.
+        format_func (callable): Function to format the input before testing it against the values in list1.
+
+    Returns: str
+    """
+    while True:
+        output = format_func(input(msg))
+        if output not in list1:
+            WINDOW.redraw()
+            print("That was not an option!")
+
+        else:
+            return output
 
 
 def suggest_closest(msg, matches, the_window, closest=True):
@@ -66,7 +119,7 @@ def formatted_input(msg):
 
     Returns: str
     """
-    return WINDOW.input(msg).strip().lower()
+    return format_string(WINDOW.input(msg))
 
 
 def updater(period, function=dummy_function()):

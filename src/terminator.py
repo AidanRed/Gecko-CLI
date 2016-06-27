@@ -298,7 +298,7 @@ class TerminalWindow(object):
         if self.wrap:
             text = "\n".join(textwrap.wrap(text, width=self.wrap_width))
 
-        self._screen += text
+        self._screen += text + end
         self._writer.write(text, end=end)
     
     def clear_buffer(self):

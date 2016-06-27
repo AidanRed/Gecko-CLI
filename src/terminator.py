@@ -61,10 +61,10 @@ def find_closest(text, values, closest=False):
             inside.append(value)
     
     if len(inside) == 0:
-        def find_similarities(text, list1):
+        def find_similarities(the_text, list1):
             num = 0
             chars_done = {}
-            for char in text:
+            for char in the_text:
                 if char in list1:
                     if char in chars_done.keys():
                         if list1.count(char) > chars_done[char]:
@@ -119,6 +119,24 @@ def index_from_end(list1, value):
     return -(list1.index(value) + 1)
 
 
+def find_nth(iterable, item, n):
+    """
+    Finds the index of the nth occurrence of item.
+
+    Args:
+        iterable (iterable): The iterable to search for item in.
+        item (): The thing to search for.
+        n (int): The occurrence to find.
+
+    Returns: int
+    """
+    start = iterable.index(item)
+    while start >= 0 and n > 1:
+        start = iterable.index(item, start + len(item))
+        n -= 1
+    return start
+
+
 class DrawQueue(object):
     def __init__(self, window):
         """
@@ -153,7 +171,7 @@ class DrawQueue(object):
 
         Returns: None
         """
-        if self.window.lock is not None or id(self.queue[0][0]) == self.window.lock:
+        if self.window.the_lock is not None or id(self.queue[0][0]) == self.window.the_lock:
             try:
                 if isinstance(self.queue[0][0], str):
                     self.window.print(self.queue[0][0])
@@ -161,7 +179,7 @@ class DrawQueue(object):
                 else:
                     self.queue[0][0](*self.queue[0][1])
 
-                self.window.lock = None
+                self.window.the_lock = None
 
             except IndexError:
                 # No draw calls currently exist.
@@ -188,23 +206,23 @@ class TerminalWindow(object):
         self.wrap = wrap
         self.wrap_width = wrap_width
             
-        self._screen = []
+        self._screen = ""
         self._writer = colours.ColouredWriter()
         self._VALID_COLOURS = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
         self.draw_queue = DrawQueue(self)
 
         # Lock is the id of the drawing function which has obtained the lock
-        self.lock = None
+        self.the_lock = None
 
     def __setattr__(self, key, value):
         # Goes to the next item in self.draw_queue whenever self is unlocked.
         try:
-            if key == "lock" and value is None and self.lock is not None:
+            if key == "the_lock" and value is None and self.the_lock is not None:
                 self.draw_queue.next()
 
         except AttributeError:
-            #Occurs in __init__
+            # Occurs in __init__
             pass
 
         super().__setattr__(key, value)
@@ -219,7 +237,7 @@ class TerminalWindow(object):
 
         Returns: None
         """
-        self.lock = the_id
+        self.the_lock = the_id
 
     def unlock(self):
         """
@@ -227,7 +245,7 @@ class TerminalWindow(object):
 
         Returns: None
         """
-        self.lock = None
+        self.the_lock = None
 
     def fg_colour(self, colour):
         """
@@ -280,18 +298,7 @@ class TerminalWindow(object):
         if self.wrap:
             text = "\n".join(textwrap.wrap(text, width=self.wrap_width))
 
-        if "\n" not in end:
-            try:
-                self._screen[-1] += text
-
-            except IndexError:
-                self._screen.append(text)
-
-        else:
-            for i in range(text.count("\n")):
-                self._screen.append("")
-                self._screen[-1] += text
-
+        self._screen += text
         self._writer.write(text, end=end)
     
     def clear_buffer(self):
@@ -300,7 +307,7 @@ class TerminalWindow(object):
 
         Returns: None
         """
-        self._screen = []
+        self._screen = ""
     
     def clear_terminal(self):
         """
@@ -326,21 +333,26 @@ class TerminalWindow(object):
         Returns: None
         """
         self.clear_terminal()
-        for line in self._screen:
-            self._writer.write(line)
+        self._writer.write(self._screen)
     
     def delete_previous(self):
         """
-        Removes the previous line in screen data.
+        Removes the previous line in screen data. If the current line has text on it, it is counted as the "previous line"
 
         Returns: None
         """
-        try:
-            the_index = index_from_end(self._screen[-1], "\n")
-            self._screen = self._screen[:-1].extend(self._screen[-1][:the_index])
-            
-        except ValueError:
-            self._screen = self._screen[:-1]
+        the_index = self._screen.rfind("\n")
+
+        if the_index != -1:
+            if len(self._screen) - 1 > the_index:
+                self._screen = self._screen[:the_index]
+
+            else:
+                new_index = self._screen[:the_index].rfind("\n")
+                self._screen = self._screen[:new_index]
+
+        else:
+            self._screen = ""
         
         self.redraw()
 
@@ -350,7 +362,25 @@ class TerminalWindow(object):
 
         Returns: int
         """
-        return self._screen.count("\n")
+        return self._screen.count("\n") + 1
+
+    def get_line(self, line_num):
+        """
+        Gets the specified line and the index where it starts in self._screen
+
+        Args:
+            line_num (int): The line number to get.
+
+        Returns: (int, str)
+        """
+        the_index = find_nth(self._screen, "\n", line_num)
+        if the_index == -1:
+            return None
+
+        end_index = find_nth(self._screen, "\n", line_num)
+        the_line = self._screen[the_index:end_index]
+
+        return the_index, the_line
 
     def insert(self, text, xy):
         """
@@ -368,15 +398,14 @@ class TerminalWindow(object):
             self._screen += (" " * xy[0]) + text
 
         else:
-            def find_nth(iterable, item, n):
-                start = iterable.index(item)
-                while start >= 0 and n > 1:
-                    start = iterable.index(item, start+len(item))
-                    n -= 1
-                return start
+            index, line = self.get_line(xy[1])
+            line_length = len(line)
+            if line_length <= xy[0]:
+                to_add = xy[0] - line_length
+                self._screen = self._screen[:index + line_length] + (" " * to_add) + text + self._screen[index + line_length:]
 
-            index = find_nth(self._screen, "\n", xy[1]) + 1
-            self._screen = self._screen[:index] + (" " * xy[0]) + text + self._screen[index:]
+            else:
+                self._screen = self._screen[:index + xy[0]] + text + self._screen[index + xy[0]:]
 
     def input(self, text="", keep_input=True):
         """
@@ -388,27 +417,11 @@ class TerminalWindow(object):
 
         Returns: str
         """
-        params = ()
-        try:
-            # If there is a space at the end of text, prevent a newline from being printed.
-            if text[-1] == " ":
-                params = (text[:-1], " ")
-
-            else:
-                params = (text, "")
-
-        except IndexError:
-            pass
-
-        self.print(*params)
+        self.print(text, end="")
         the_input = input()
 
         if keep_input:
             # Add the input to the screen so it will stay on redraw.
-            try:
-                self._screen[:-1].extend(self._screen[-1] + the_input)
-
-            except IndexError:
-                self._screen = [the_input,]
+            self._screen += the_input + "\n"
 
         return the_input

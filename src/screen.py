@@ -150,7 +150,8 @@ class Screen(object):
     Makes use of keywords in the form @KEYWORD@ which are replaced when the screen is drawn. These are used to display
     dynamic information such as the current time.
     """
-    def __init__(self, title, information, function=dummy_function, args=(), wrap=False, wrap_width=TERMINAL_WIDTH):
+    def __init__(self, title, information, function=dummy_function, args=(), wrap=False, wrap_width=TERMINAL_WIDTH,
+                 auto_lock=False):
         """
         Initialises the screen object
 
@@ -159,6 +160,10 @@ class Screen(object):
             information (str): information to be displayed. Can contain keywords in the form: @KEYWORD@.
             function: optional function to be called after displaying information.
             args (iterable): arguments to be provided to the function.
+            wrap (bool): whether or not wrapping is enabled for the text.
+            wrap_width (int): the maximum number of characters before the text is put onto a new line
+                              (does nothing if wrap is False).
+            auto_lock (bool): If true, Screen object will acquire lock when called and release lock before returning.
         """
         self.title = title
         self.title_display = "=== " + title + " ==="
@@ -169,6 +174,8 @@ class Screen(object):
         self.wrap = wrap
         self.wrap_width = wrap_width
 
+        self.auto_lock = auto_lock
+
     def __call__(self, kwargs={}):
         """
         Args:
@@ -177,6 +184,9 @@ class Screen(object):
 
         Returns: self.function output
         """
+        if self.auto_lock:
+            WINDOW.lock(id(self))
+
         WINDOW.clear_screen()
         to_display = self.information
 
@@ -197,7 +207,10 @@ class Screen(object):
         WINDOW.wrap_width = prev_width
 
         if len(self.func_args) > 0:
-            return self.function(*self.func_args)
+            to_return = self.function(*self.func_args)
 
         else:
-            return self.function()
+            to_return = self.function()
+
+        WINDOW.unlock()
+        return to_return

@@ -15,6 +15,28 @@ else:
 TERMINAL_WIDTH, TERMINAL_HEIGHT = shutil.get_terminal_size((80, 20))
 
 
+def wrap_padded_text(text, left_padding, right_padding):
+    width = TERMINAL_WIDTH - left_padding - right_padding
+
+    output = ""
+    text = textwrap.wrap(text, width)
+    for line in text:
+        output += " " * left_padding
+        output += line + "\n"
+
+    return output
+
+
+def centre_text(text):
+    text_lines = textwrap.wrap(text, TERMINAL_WIDTH)
+    output = ""
+
+    for line in text_lines:
+        output += line.center(TERMINAL_WIDTH)
+
+    return output
+
+
 def get_char():
     """
     Gets a single character from standard input.
@@ -190,7 +212,7 @@ class TerminalWindow(object):
     """
     Flexible terminal interface that gives greater control over how text is displayed.
     """
-    def __init__(self, wrap=False, wrap_width=TERMINAL_WIDTH):
+    def __init__(self, wrap=False, left_padding=0, right_padding=TERMINAL_WIDTH):
         """
         Initialises the TerminalWindow object.
 
@@ -204,7 +226,8 @@ class TerminalWindow(object):
             self._CLEAR_COMMAND = "clear"
 
         self.wrap = wrap
-        self.wrap_width = wrap_width
+        self.left_padding = left_padding
+        self.right_padding = right_padding
             
         self._screen = ""
         self._writer = colours.ColouredWriter()
@@ -296,7 +319,7 @@ class TerminalWindow(object):
         Returns: None
         """
         if self.wrap:
-            text = "\n".join(textwrap.wrap(text, width=self.wrap_width))
+            text = wrap_padded_text(text, self.left_padding, self.right_padding)
 
         self._screen += text + end
         self._writer.write(text, end=end)

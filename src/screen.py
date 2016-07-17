@@ -24,7 +24,7 @@ def dummy_function():
     pass
 
 
-def format_string(the_string):
+def format_input(the_string):
     """
     Makes the string lowercase and removes leading and trailing whitespace.
 
@@ -34,6 +34,24 @@ def format_string(the_string):
     Returns: str
     """
     return the_string.strip().lower()
+
+
+def format_sentence(the_string):
+    """
+    Makes the first letter of a string uppercase and adds a full-stop to the end if there isn't one.
+
+    Args:
+        the_string (str): The string to format.
+
+    Returns: str
+
+    """
+    the_string = the_string.strip()
+    the_string = the_string[0].upper() + the_string[1:]
+    if the_string[-1] != ".":
+        the_string += "."
+
+    return the_string
 
 
 def force_int(msg):
@@ -57,7 +75,7 @@ def force_int(msg):
     return the_int
 
 
-def force_input_list(msg, list1, format_func=format_string):
+def force_input_list(msg, list1, format_func=format_input):
     """
     Forces the user to enter input contained in list1.
 
@@ -119,7 +137,7 @@ def formatted_input(msg):
 
     Returns: str
     """
-    return format_string(WINDOW.input(msg))
+    return format_input(WINDOW.input(msg))
 
 
 def updater(period, function=dummy_function()):
@@ -199,7 +217,7 @@ class Screen(object):
         WINDOW.wrap = self.wrap
         WINDOW.wrap_width = self.wrap_width
 
-        WINDOW.print(self.title_display.center(TERMINAL_WIDTH))
+        WINDOW.print(terminator.centre_text(self.title_display))
         WINDOW.print()
         WINDOW.print(to_display)
 

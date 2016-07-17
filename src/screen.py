@@ -212,7 +212,7 @@ class Screen(object):
             to_display = to_display.replace("@" + key + "@", kwargs[key])
 
         prev_wrap = WINDOW.wrap
-        prev_width = WINDOW.wrap_width
+        prev_l, prev_r = WINDOW.left_padding, WINDOW.right_padding
 
         WINDOW.wrap = self.wrap
         WINDOW.wrap_width = self.wrap_width
@@ -222,7 +222,7 @@ class Screen(object):
         WINDOW.print(to_display)
 
         WINDOW.wrap = prev_wrap
-        WINDOW.wrap_width = prev_width
+        WINDOW.left_padding, WINDOW.right_padding = prev_l, prev_r
 
         if len(self.func_args) > 0:
             to_return = self.function(*self.func_args)

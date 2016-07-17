@@ -17,8 +17,9 @@ TERMINAL_WIDTH, TERMINAL_HEIGHT = shutil.get_terminal_size((80, 20))
 
 def wrap_padded_text(text, left_padding, right_padding):
     width = TERMINAL_WIDTH - left_padding - right_padding
-
+    
     output = ""
+    
     text = textwrap.wrap(text, width)
     for line in text:
         output += " " * left_padding
@@ -212,7 +213,7 @@ class TerminalWindow(object):
     """
     Flexible terminal interface that gives greater control over how text is displayed.
     """
-    def __init__(self, wrap=False, left_padding=0, right_padding=TERMINAL_WIDTH):
+    def __init__(self, wrap=False, left_padding=0, right_padding=0):
         """
         Initialises the TerminalWindow object.
 

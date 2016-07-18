@@ -17,6 +17,9 @@ TERMINAL_WIDTH, TERMINAL_HEIGHT = shutil.get_terminal_size((80, 20))
 
 def wrap_padded_text(text, left_padding, right_padding):
     width = TERMINAL_WIDTH - left_padding - right_padding
+
+    if len(text) < width:
+        return text
     
     output = ""
     

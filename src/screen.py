@@ -47,10 +47,14 @@ def format_sentence(the_string):
 
     """
     the_string = the_string.strip()
-    the_string = the_string[0].upper() + the_string[1:]
-    if the_string[-1] != ".":
-        the_string += "."
-
+    try:
+        the_string = the_string[0].upper() + the_string[1:]
+        if the_string[-1] != ".":
+            the_string += "."
+    
+    except IndexError:
+        pass
+    
     return the_string
 
 

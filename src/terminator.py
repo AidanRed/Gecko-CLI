@@ -1,6 +1,5 @@
 import os
 import sys
-import textwrap
 import shutil
 
 from . import colours
@@ -15,24 +14,48 @@ else:
 TERMINAL_WIDTH, TERMINAL_HEIGHT = shutil.get_terminal_size((80, 20))
 
 
+def wrap(text, width):
+    lines = text.split("\n")
+    output = []
+    for line in lines:
+        new_lines = [line, ]
+        last_line = new_lines[-1]
+        while len(last_line) > width:
+            last_line = new_lines[-1]
+
+            try:
+                new_lines = new_lines[:-1]
+
+            except IndexError:
+                pass
+
+            new_lines.append(last_line[:width])
+            new_lines.append(last_line[width:])
+
+        output.extend(new_lines)
+
+    return output
+
+
 def wrap_padded_text(text, left_padding, right_padding):
     width = TERMINAL_WIDTH - left_padding - right_padding
 
-    if len(text) < width:
-        return text
-    
+    trailing_whitespace = len(text) - len(text.rstrip())
+
     output = ""
     
-    text = textwrap.wrap(text, width)
+    text = wrap(text, width)
     for line in text:
         output += " " * left_padding
         output += line
+
+    output += trailing_whitespace * " "
 
     return output
 
 
 def centre_text(text):
-    text_lines = textwrap.wrap(text, TERMINAL_WIDTH)
+    text_lines = wrap(text, TERMINAL_WIDTH)
     output = ""
 
     for line in text_lines:

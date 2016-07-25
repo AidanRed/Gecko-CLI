@@ -1,0 +1,1 @@
+Simple and powerful library for creating terminal interfaces or games with Python.

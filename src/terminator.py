@@ -2,7 +2,11 @@ import os
 import sys
 import shutil
 
-from . import colours
+try:
+    from . import colours
+
+except ImportError:
+    pass
 
 if os.name == "nt":
     import msvcrt
@@ -235,6 +239,16 @@ class DrawQueue(object):
                 pass
 
 
+class BasicWriter(object):
+    def __init__(self):
+        self.colour = None
+        self.on_colour = None
+
+    @staticmethod
+    def write(text, end="\n"):
+        print(text, end=end)
+
+
 class TerminalWindow(object):
     """
     Flexible terminal interface that gives greater control over how text is displayed.
@@ -257,7 +271,13 @@ class TerminalWindow(object):
         self.right_padding = right_padding
             
         self._screen = ""
-        self._writer = colours.ColouredWriter()
+
+        try:
+            self._writer = colours.ColouredWriter()
+
+        except NameError:
+            self._writer = BasicWriter()
+
         self._VALID_COLOURS = [None, "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
         self.draw_queue = DrawQueue(self)
@@ -345,6 +365,9 @@ class TerminalWindow(object):
 
         Returns: None
         """
+        # Allows lists and other objects to be printed
+        text = text.__str__()
+
         if self.wrap:
             text = wrap_padded_text(text, self.left_padding, self.right_padding)
 

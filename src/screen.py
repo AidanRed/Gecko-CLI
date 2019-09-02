@@ -1,4 +1,7 @@
-import datetime
+"""
+Remake input functions to use validate_input function as a base function?
+"""
+
 import logging
 import os
 import threading
@@ -19,9 +22,9 @@ def dummy_function():
     """
     Placeholder function.
 
-    Returns: None
+    Returns: True
     """
-    pass
+    return True
 
 
 def format_input(the_string):
@@ -44,7 +47,6 @@ def format_sentence(the_string):
         the_string (str): The string to format.
 
     Returns: str
-
     """
     the_string = the_string.strip()
     try:
@@ -56,6 +58,26 @@ def format_sentence(the_string):
         pass
     
     return the_string
+
+
+def validate_input(msg, validation_func=dummy_function, format_func=format_input):
+    """
+    Get input until validation_func(input) is True.
+     
+    Args:
+        msg (str): The message to display when asking for input.
+        validation_func (callable): The function to test the input with.
+        format_func (callable): Function to format the input before it is validated.
+    
+    Returns: str
+    """
+    while True:
+        the_input = format_func(input(msg))
+        if validation_func(the_input):
+            return the_input
+
+        WINDOW.redraw()
+        print("Invalid input.")
 
 
 def force_int(msg):

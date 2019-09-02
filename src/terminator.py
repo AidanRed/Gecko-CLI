@@ -47,7 +47,7 @@ def wrap_padded_text(text, left_padding, right_padding):
     trailing_whitespace = len(text) - len(text.rstrip())
 
     output = ""
-    
+
     text = wrap(text, width)
     for line in text:
         output += " " * left_padding

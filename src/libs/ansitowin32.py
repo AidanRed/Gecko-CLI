@@ -190,7 +190,6 @@ class AnsiToWin32(object):
 
         return params
 
-
     def call_win32(self, command, params):
         if command == 'm':
             for param in params:
